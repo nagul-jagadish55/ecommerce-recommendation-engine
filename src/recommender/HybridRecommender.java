@@ -10,20 +10,20 @@ public class HybridRecommender {
             Map<Integer, Map<Integer, Integer>> matrix,
             List<Product> products) {
 
-        // if new user → popular products
-        if (!matrix.containsKey(userId) || matrix.get(userId).size() == 0) {
-            System.out.println("Using Popularity-Based Recommendations");
-            return PopularityRecommender.getPopularProducts(matrix);
-        }
+            //// If user not present in interaction matrix → completely new user
+            if (!matrix.containsKey(userId)) {
+                System.out.println("Using Popularity-Based Recommendations");
+                return PopularityRecommender.getPopularProducts(matrix);
+            }
 
-        // if user has very few interactions → content-based
-        if (matrix.get(userId).size() < 2) {
-            System.out.println("Using Content-Based Recommendations");
-            return ContentBasedRecommender.recommendByCategory(userId, matrix, products);
-        }
+            // If user has only one interaction → low activity user
+            if (matrix.get(userId).size() <= 1) {
+                System.out.println("Using Content-Based Recommendations");
+                return ContentBasedRecommender.recommendByCategory(userId, matrix, products);
+            }
 
-        // otherwise → collaborative filtering
-        System.out.println("Using Collaborative Filtering");
-        return RecommendationEngine.recommendProducts(userId, matrix);
+            // otherwise → collaborative filtering
+            System.out.println("Using Collaborative Filtering");
+            return RecommendationEngine.recommendProducts(userId, matrix);
     }
 }
